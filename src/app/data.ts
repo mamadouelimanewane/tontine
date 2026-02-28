@@ -25,23 +25,29 @@ export interface Loan {
     status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'PAID' | 'LATE';
 }
 
-export type Frequency = "weekly" | "monthly";
+export type Frequency = "weekly" | "biweekly" | "monthly";
 
 export interface Tontine {
     id: string;
     name: string;
+    description?: string;
     amount: number;
+    currency?: string;
     frequency: Frequency;
+    startDate?: string;
     totalCycles: number;
     currentCycle: number;
     members: string[]; // List of Member IDs
     status: 'active' | 'completed' | 'pending';
+    createdBy?: string;
+    rules?: string;
     // New Configurations
     drawStrategy: DrawStrategy;
     fineAmount: number; // Amount per day of delay
     loanInterestEnabled: boolean; // Toggle for interest on loans
     loanInterestRate: number; // Percentage, e.g., 5 for 5%
     maxLoanAmount: number;
+    currentBeneficiary?: string;
     activeCycleId?: string;
     nextDrawDate?: string;
 }

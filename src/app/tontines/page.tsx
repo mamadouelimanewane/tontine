@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { SAMPLE_TONTINES, SAMPLE_MEMBERS, generateContributions, generateId, formatMoney, Tontine } from '../data';
+import { SAMPLE_TONTINES, SAMPLE_MEMBERS, generateContributions, generateId, formatMoney, Tontine, Frequency } from '../data';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -36,7 +36,7 @@ export default function TontinesPage() {
             description: newTontineDesc,
             amount: parseInt(newTontineAmount),
             currency: "FCFA",
-            frequency: newTontineFreq as "weekly" | "monthly" | "biweekly", // Cast safely as select ensures valid values
+            frequency: newTontineFreq as Frequency,
             startDate: new Date().toISOString().split("T")[0],
             members: ["m1"],
             currentCycle: 1,
@@ -45,6 +45,11 @@ export default function TontinesPage() {
             status: "active",
             createdBy: "m1",
             rules: "",
+            drawStrategy: 'ROTATIVE',
+            fineAmount: 0,
+            loanInterestEnabled: false,
+            loanInterestRate: 0,
+            maxLoanAmount: 0,
         };
 
         setTontines((prev) => [...prev, newTontine]);
