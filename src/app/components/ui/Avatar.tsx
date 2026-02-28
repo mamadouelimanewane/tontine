@@ -5,9 +5,10 @@ interface AvatarProps {
     emoji?: string;
     size?: number;
     bg?: string;
+    style?: React.CSSProperties;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ emoji, size = 44, bg = "#F3F4F6" }) => (
+export const Avatar: React.FC<AvatarProps> = ({ emoji, size = 44, bg = "#F3F4F6", style = {} }) => (
     <div style={{
         width: size,
         height: size,
@@ -17,7 +18,8 @@ export const Avatar: React.FC<AvatarProps> = ({ emoji, size = 44, bg = "#F3F4F6"
         alignItems: "center",
         justifyContent: "center",
         fontSize: size * 0.5,
-        flexShrink: 0
+        flexShrink: 0,
+        ...style
     }}>
         {emoji}
     </div>
