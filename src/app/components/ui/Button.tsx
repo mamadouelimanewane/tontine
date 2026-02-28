@@ -4,7 +4,7 @@ import React from 'react';
 interface ButtonProps {
     children: React.ReactNode;
     onClick?: () => void;
-    variant?: "primary" | "secondary" | "danger" | "ghost" | "accent";
+    variant?: "primary" | "secondary" | "danger" | "ghost" | "accent" | "outline";
     size?: "sm" | "md" | "lg";
     style?: React.CSSProperties;
     disabled?: boolean;
@@ -17,6 +17,7 @@ export const Button: React.FC<ButtonProps> = ({ children, onClick, variant = "pr
         danger: { background: "#FEE2E2", color: "#991B1B" },
         ghost: { background: "transparent", color: "#6B7280" },
         accent: { background: "linear-gradient(135deg, #D97706 0%, #F59E0B 100%)", color: "#fff" },
+        outline: { background: "transparent", color: "#1B6B4A", border: "1px solid #1B6B4A" },
     };
     const sizes = { sm: { padding: "8px 14px", fontSize: 13 }, md: { padding: "11px 20px", fontSize: 14 }, lg: { padding: "14px 28px", fontSize: 16 } };
 
