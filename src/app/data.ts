@@ -48,6 +48,7 @@ export interface Tontine {
     loanInterestRate: number; // Percentage, e.g., 5 for 5%
     maxLoanAmount: number;
     currentBeneficiary?: string;
+    beneficiaries?: Record<number, string>; // { cycleNumber: memberId }
     activeCycleId?: string;
     nextDrawDate?: string;
 }
@@ -125,12 +126,14 @@ export const SAMPLE_TONTINES: Tontine[] = [
     {
         id: "t1", name: "Tontine Famille", amount: 50000, frequency: "monthly", totalCycles: 12, currentCycle: 4,
         members: ["m1", "m2", "m3", "m4", "m5"], status: 'active',
-        drawStrategy: 'ROTATIVE', fineAmount: 1000, loanInterestEnabled: true, loanInterestRate: 5, maxLoanAmount: 200000, nextDrawDate: '2024-03-01'
+        drawStrategy: 'ROTATIVE', fineAmount: 1000, loanInterestEnabled: true, loanInterestRate: 5, maxLoanAmount: 200000, nextDrawDate: '2024-03-01',
+        currentBeneficiary: "m4", beneficiaries: { 1: "m1", 2: "m2", 3: "m3", 4: "m4" }
     },
     {
         id: "t2", name: "Tontine Bureau", amount: 100000, frequency: "monthly", totalCycles: 10, currentCycle: 2,
         members: ["m1", "m3", "m5"], status: 'active',
-        drawStrategy: 'RANDOM', fineAmount: 2500, loanInterestEnabled: false, loanInterestRate: 0, maxLoanAmount: 500000, nextDrawDate: '2024-03-15'
+        drawStrategy: 'RANDOM', fineAmount: 2500, loanInterestEnabled: false, loanInterestRate: 0, maxLoanAmount: 500000, nextDrawDate: '2024-03-15',
+        currentBeneficiary: "m3", beneficiaries: { 1: "m1", 2: "m3" }
     },
 ];
 

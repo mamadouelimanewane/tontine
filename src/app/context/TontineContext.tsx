@@ -30,6 +30,7 @@ interface TontineContextType {
     rejectLoan: (loanId: string) => void;
     markNotificationRead: (id: string) => void;
     markAllNotificationsRead: () => void;
+    performDraw: (tontineId: string) => string | undefined; // Returns the winner ID
 }
 
 const TontineContext = createContext<TontineContextType | undefined>(undefined);
@@ -43,6 +44,56 @@ export const TontineProvider = ({ children }: { children: ReactNode }) => {
 
     const addTontine = (tontine: Tontine) => {
         setTontines((prev) => [...prev, tontine]);
+    };
+
+    const performDraw = (tontineId: string) => {
+        const tontine = tontines.find(t => t.id === tontineId);
+        if (!tontine) return undefined;
+
+        // 1. Identify potential winners (who hasn't won yet in this round)
+        const pastWinners = Object.values(tontine.beneficiaries || {});
+        const candidates = tontine.members.filter(mId => !pastWinners.includes(mId));
+
+        if (candidates.length === 0) return undefined; // No candidates left
+
+        let winnerId: string;
+        if (tontine.drawStrategy === 'ROTATIVE') {
+            // Pick based on order in members list
+            winnerId = candidates[0];
+        } else {
+            // RANDOM: pick randomly among candidates
+            winnerId = candidates[Math.floor(Math.random() * candidates.length)];
+        }
+
+        // 2. Update tontine state
+        setTontines(prev => prev.map(t => {
+            if (t.id === tontineId) {
+                const nextCycle = t.currentCycle;
+                return {
+                    ...t,
+                    currentBeneficiary: winnerId,
+                    beneficiaries: {
+                        ...(t.beneficiaries || {}),
+                        [nextCycle]: winnerId
+                    }
+                };
+            }
+            return t;
+        }));
+
+        // 3. Notify
+        const winnerMember = members.find(m => m.id === winnerId);
+        const newNotif: Notification = {
+            id: generateId(),
+            type: 'draw',
+            read: false,
+            date: 'Aujourd\'hui',
+            message: `🎉 Tirage effectué ! Le bénéficiaire du tour ${tontine.currentCycle} est ${winnerMember?.name}`,
+            tontineId
+        };
+        setNotifications(prev => [newNotif, ...prev]);
+
+        return winnerId;
     };
 
     const recordPayment = (tontineId: string, memberId: string, paymentMethod: string) => {
@@ -126,7 +177,8 @@ export const TontineProvider = ({ children }: { children: ReactNode }) => {
             approveLoan,
             rejectLoan,
             markNotificationRead,
-            markAllNotificationsRead
+            markAllNotificationsRead,
+            performDraw
         }}>
             {children}
         </TontineContext.Provider>

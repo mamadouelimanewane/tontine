@@ -10,8 +10,17 @@ import { TontineProvider, useTontine } from "./context/TontineContext";
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith('/admin');
+    const isLanding = pathname === '/';
 
     if (isAdmin) {
+        return (
+            <TontineProvider>
+                {children}
+            </TontineProvider>
+        );
+    }
+
+    if (isLanding) {
         return (
             <TontineProvider>
                 {children}
@@ -40,7 +49,7 @@ function Navigation() {
 
     return (
         <nav className="bottom-nav">
-            <Link href="/" className={`nav-item ${pathname === "/" ? "active" : ""}`}>
+            <Link href="/dashboard" className={`nav-item ${pathname === "/dashboard" ? "active" : ""}`}>
                 <Home size={24} />
                 <span>Accueil</span>
             </Link>

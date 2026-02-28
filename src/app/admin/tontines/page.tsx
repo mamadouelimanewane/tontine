@@ -31,6 +31,7 @@ export default function AdminTontinesPage() {
                             <th style={{ padding: '1.25rem', color: '#a3aed0', fontSize: '0.75rem', textTransform: 'uppercase' }}>Montant</th>
                             <th style={{ padding: '1.25rem', color: '#a3aed0', fontSize: '0.75rem', textTransform: 'uppercase' }}>Fréquence</th>
                             <th style={{ padding: '1.25rem', color: '#a3aed0', fontSize: '0.75rem', textTransform: 'uppercase' }}>Tour Actuel</th>
+                            <th style={{ padding: '1.25rem', color: '#a3aed0', fontSize: '0.75rem', textTransform: 'uppercase' }}>Bénéficiaire</th>
                             <th style={{ padding: '1.25rem', color: '#a3aed0', fontSize: '0.75rem', textTransform: 'uppercase' }}>Utilisateurs</th>
                             <th style={{ padding: '1.25rem', color: '#a3aed0', fontSize: '0.75rem', textTransform: 'uppercase' }}>Statut</th>
                             <th style={{ padding: '1.25rem', color: '#a3aed0', fontSize: '0.75rem', textTransform: 'uppercase' }}>Actions</th>
@@ -44,6 +45,11 @@ export default function AdminTontinesPage() {
                                 <td style={{ padding: '1.25rem', fontWeight: 600, color: '#1b2559' }}>{formatMoney(t.amount)}</td>
                                 <td style={{ padding: '1.25rem', color: '#1b2559' }}>{t.frequency}</td>
                                 <td style={{ padding: '1.25rem', fontWeight: 600, color: '#1b2559' }}>{t.currentCycle}/{t.totalCycles}</td>
+                                <td style={{ padding: '1.25rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Badge bg="#F4F7FE" color="#1B2559">{t.currentBeneficiary || "Non tiré"}</Badge>
+                                    </div>
+                                </td>
                                 <td style={{ padding: '1.25rem', color: '#1b2559' }}>{t.members.length} membres</td>
                                 <td style={{ padding: '1.25rem' }}>
                                     <Badge

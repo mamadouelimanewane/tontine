@@ -4,14 +4,13 @@
 import React, { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-    SAMPLE_TONTINES,
-    SAMPLE_MEMBERS,
-    generateContributions,
     PAYMENT_METHODS,
     formatMoney,
     getScoreColor,
-    getStatusBadge
+    getStatusBadge,
+    Tontine
 } from '../../data';
+import { useTontine } from '../../context/TontineContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -25,9 +24,7 @@ export default function TontineDetailPage({ params }: { params: Promise<{ id: st
     const router = useRouter();
     const { id } = use(params);
 
-    const [tontines] = useState(SAMPLE_TONTINES);
-    const [members] = useState(SAMPLE_MEMBERS);
-    const [contributions, setContributions] = useState(generateContributions());
+    const { tontines, members, contributions, performDraw: contextPerformDraw, recordPayment: contextRecordPayment } = useTontine();
 
     const [activeTab, setActiveTab] = useState("overview");
     const [showPayment, setShowPayment] = useState(false);
@@ -49,9 +46,8 @@ export default function TontineDetailPage({ params }: { params: Promise<{ id: st
     // For now, let's assume we find the beneficiary from recent draw or just mock it.
     // In data.ts Tontine interface does not have currentBeneficiary. I need to fix that visually or use state.
     // Let's assume the beneficiary is determined by the cycle index for ROTATIVE.
-    const beneficiaryId = tontine.drawStrategy === 'ROTATIVE'
-        ? tontine.members[(tontine.currentCycle - 1) % tontine.members.length]
-        : drawResult;
+    const beneficiaryId = tontine.beneficiaries?.[tontine.currentCycle] ||
+        (tontine.drawStrategy === 'ROTATIVE' ? tontine.members[(tontine.currentCycle - 1) % tontine.members.length] : undefined);
 
     const beneficiary = members.find((m) => m.id === beneficiaryId);
 
@@ -59,27 +55,24 @@ export default function TontineDetailPage({ params }: { params: Promise<{ id: st
     const paidThisCycle = currentContribs.filter((c) => c.status === "paid").length;
 
     const handlePayment = () => {
-        if (selectedMemberId) {
-            setContributions((prev) =>
-                prev.map((c) =>
-                    c.tontineId === id && c.memberId === selectedMemberId && c.status !== "paid"
-                        ? { ...c, status: "paid", paymentMethod, paidDate: new Date().toISOString().split("T")[0] }
-                        : c
-                )
-            );
+        if (selectedMemberId && id) {
+            contextRecordPayment(id, selectedMemberId, paymentMethod);
             setShowPayment(false);
             setSelectedMemberId(null);
         }
     };
 
-    const performDraw = () => {
+    const handleDraw = () => {
+        if (!id) return;
         setIsDrawing(true);
+        // Simulate animation delay
         setTimeout(() => {
-            const eligibleMembers = tontine.members; // In real app, filter out those who already won
-            const winnerId = eligibleMembers[Math.floor(Math.random() * eligibleMembers.length)];
-            setDrawResult(winnerId);
+            const winnerId = contextPerformDraw(id);
+            if (winnerId) {
+                setDrawResult(winnerId);
+            }
             setIsDrawing(false);
-        }, 2000);
+        }, 3000);
     };
 
     return (
@@ -187,31 +180,44 @@ export default function TontineDetailPage({ params }: { params: Promise<{ id: st
                         </div>
 
                         {tontine.drawStrategy === 'RANDOM' ? (
-                            <Card style={{ padding: 30 }}>
+                            <Card style={{ padding: 40, background: isDrawing ? "linear-gradient(135deg, #fff 0%, #F0FDF4 100%)" : "#fff", overflow: "hidden", position: "relative" }}>
                                 {isDrawing ? (
-                                    <div style={{ fontSize: 24, fontWeight: 700, color: "#D97706" }}>Tirage en cours... 🎲</div>
-                                ) : drawResult ? (
-                                    <div>
-                                        <div style={{ fontSize: 14, color: "#6B7280", marginBottom: 10 }}>Le gagnant est</div>
-                                        <Avatar emoji={members.find(m => m.id === drawResult)?.avatar} size={80} style={{ margin: "0 auto 10px" }} />
-                                        <div style={{ fontSize: 24, fontWeight: 800, color: "#059669" }}>{members.find(m => m.id === drawResult)?.name}</div>
-                                        <div style={{ marginTop: 20 }}>
-                                            <Button onClick={() => setDrawResult(null)} variant="outline">Relancer</Button>
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+                                        <div style={{ fontSize: 40, animation: "bounce 0.5s infinite" }}>🎲</div>
+                                        <div style={{ fontSize: 20, fontWeight: 700, color: "#1B6B4A" }}>Mélange en cours...</div>
+                                        <div style={{ width: "100%", maxWidth: 200 }}><ProgressBar value={50} max={100} color="#1B6B4A" /></div>
+                                    </div>
+                                ) : drawResult || beneficiaryId ? (
+                                    <div style={{ animation: "fadeIn 0.8s ease-out" }}>
+                                        <div style={{ fontSize: 14, color: "#6B7280", marginBottom: 15 }}>L'heureux élu du tour {tontine.currentCycle} est</div>
+                                        <div style={{ position: "relative", width: 100, height: 100, margin: "0 auto 20px" }}>
+                                            <Avatar emoji={members.find(m => m.id === (drawResult || beneficiaryId))?.avatar} size={100} style={{ border: "4px solid #FCD34D" }} />
+                                            <div style={{ position: "absolute", top: -10, right: -10, fontSize: 32 }}>👑</div>
                                         </div>
+                                        <div style={{ fontSize: 28, fontWeight: 900, color: "#1B6B4A", marginBottom: 8 }}>{members.find(m => m.id === (drawResult || beneficiaryId))?.name}</div>
+                                        <div style={{ fontSize: 13, color: "#6B7280", marginBottom: 25 }}>Félicitations !</div>
+                                        <Button onClick={() => setDrawResult(null)} variant="outline" size="sm">Fermer</Button>
                                     </div>
                                 ) : (
                                     <div>
-                                        <p style={{ marginBottom: 20 }}>Le tirage pour le tour {tontine.currentCycle} n'a pas encore été effectué.</p>
-                                        <Button onClick={performDraw} size="lg" style={{ width: "100%" }}>Lancer le tirage</Button>
+                                        <p style={{ marginBottom: 25, fontSize: 15, color: "#4B5563" }}>Prêt à découvrir le bénéficiaire de ce tour ?</p>
+                                        <Button onClick={handleDraw} size="lg" style={{ width: "100%", height: 60, fontSize: 18, fontWeight: 800 }}>
+                                            🎰 Lancer le Tirage au Sort
+                                        </Button>
                                     </div>
                                 )}
                             </Card>
                         ) : (
-                            <Card style={{ padding: 20, textAlign: 'left' }}>
-                                <p>Ce mode de tirage ({tontine.drawStrategy}) ne nécessite pas d'action manuelle ou n'est pas encore supporté interactivement.</p>
-                                <div style={{ background: '#F9FAFB', padding: 10, borderRadius: 8, marginTop: 10 }}>
-                                    <strong>Prochain bénéficiaire :</strong><br />
-                                    {members.find(m => m.id === beneficiaryId)?.name || "Non défini"}
+                            <Card style={{ padding: 30, textAlign: 'center', background: "#F9FAFB" }}>
+                                <div style={{ fontSize: 32, marginBottom: 15 }}>⚡</div>
+                                <h4 style={{ margin: "0 0 10px", fontWeight: 700 }}>Mode Rotatif Actif</h4>
+                                <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 20 }}>Le bénéficiaire est défini automatiquement par l'ordre préétabli.</p>
+                                <div style={{ background: '#fff', padding: 20, borderRadius: 16, border: "1px solid #E5E7EB" }}>
+                                    <div style={{ fontSize: 11, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>Bénéficiaire désigné</div>
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                                        <Avatar emoji={members.find(m => m.id === beneficiaryId)?.avatar} size={40} />
+                                        <span style={{ fontSize: 18, fontWeight: 800, color: "#111827" }}>{members.find(m => m.id === beneficiaryId)?.name}</span>
+                                    </div>
                                 </div>
                             </Card>
                         )}
