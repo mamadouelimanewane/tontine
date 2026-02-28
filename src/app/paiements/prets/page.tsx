@@ -3,15 +3,15 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTontine } from '../../../context/TontineContext';
-import { formatMoney, getStatusBadge } from '../../../data';
-import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Badge } from '../../../components/ui/Badge';
-import { Modal } from '../../../components/ui/Modal';
-import { Input } from '../../../components/ui/Input';
+import { useTontine } from '../../context/TontineContext';
+import { formatMoney, getStatusBadge } from '../../data';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
+import { Modal } from '../../components/ui/Modal';
+import { Input } from '../../components/ui/Input';
 import { Wallet, Plus, AlertCircle } from 'lucide-react';
-import { Loan, Tontine } from '../../../data';
+import { Loan, Tontine } from '../../data';
 
 export default function LoansPage() {
     const { loans, tontines, requestLoan } = useTontine();
