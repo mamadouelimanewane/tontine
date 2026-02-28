@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#059669"/>
+  <g transform="translate(256, 256)" stroke="white" stroke-width="42" fill="none" stroke-linecap="round">
+    <!-- Top Circle -->
+    <path d="M-60,-60 A 85,85 0 1,1 60,-60 A 85,85 0 1,1 -60,-60" />
+    <!-- Left Circle -->
+    <path d="M-110,50 A 85,85 0 1,1 10,50 A 85,85 0 1,1 -110,50" />
+    <!-- Right Circle -->
+    <path d="M10,50 A 85,85 0 1,1 110,50 A 85,85 0 1,1 10,50" />
+    
+    <!-- Overlays to create interlocking effect -->
+    <path d="M-13.5,-128.5 A 85,85 0 0,1 60,-60" stroke="#059669" stroke-width="50" />
+    <path d="M-13.5,-128.5 A 85,85 0 0,1 60,-60" />
+    
+    <path d="M-110,50 A 85,85 0 0,1 -60,-28" stroke="#059669" stroke-width="50" />
+    <path d="M-110,50 A 85,85 0 0,1 -60,-28" />
+    
+    <path d="M110,50 A 85,85 0 0,0 80,123" stroke="#059669" stroke-width="50" />
+    <path d="M110,50 A 85,85 0 0,0 80,123" />
+  </g>
+</svg>

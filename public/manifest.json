@@ -1,0 +1,16 @@
+{
+    "name": "TontinePay",
+    "short_name": "TontinePay",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#059669",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/icon.svg",
+            "type": "image/svg+xml",
+            "sizes": "any"
+        }
+    ]
+}
