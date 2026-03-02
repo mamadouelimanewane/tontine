@@ -181,7 +181,7 @@ export default function PaymentsPage() {
 
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12, borderTop: "1px solid #F3F4F6" }}>
                                 <div style={{ fontSize: 16, fontWeight: 800, color: "#111827" }}>{formatMoney(contrib.amount)}</div>
-                                <Button size="sm" onClick={() => openPaymentModal(contrib.id)}>Payer</Button>
+                                <Button size="sm" onClick={() => openPaymentModal(contrib.id)}>Cotisez</Button>
                             </div>
                         </Card>
                     );
