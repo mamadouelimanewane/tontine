@@ -1,10 +1,10 @@
 
 "use client";
 
-import { Wallet, TrendingUp, Users, ArrowUpRight, Plus, ChevronRight } from 'lucide-react';
+import { Wallet, TrendingUp, Users, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTontine } from '../context/TontineContext';
-import { formatMoney, getStatusBadge } from '../data';
+import { formatMoney } from '../data';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
@@ -67,8 +67,8 @@ export default function Dashboard() {
             <div style={{ padding: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
                     <button onClick={() => router.push('/tontines')} className="btn btn-primary" style={{ flex: 1, height: 'auto', padding: '1.25rem 1rem', flexDirection: 'column' }}>
-                        <Plus size={24} />
-                        <span style={{ marginTop: '0.5rem' }}>Nouvelle Tontine</span>
+                        <Users size={24} />
+                        <span style={{ marginTop: '0.5rem' }}>Mes Tontines</span>
                     </button>
                     <button onClick={() => router.push('/paiements')} className="btn" style={{ flex: 1, height: 'auto', padding: '1.25rem 1rem', flexDirection: 'column', backgroundColor: 'var(--primary-light)', color: 'var(--primary-dark)' }}>
                         <Wallet size={24} />
@@ -117,7 +117,7 @@ export default function Dashboard() {
 
                 {activeTontines.length === 0 && (
                     <div style={{ textAlign: 'center', padding: '2rem 0', color: '#94a3b8' }}>
-                        Aucune tontine active. Créez-en une !
+                        Vous n'avez pas encore de tontine active.
                     </div>
                 )}
 

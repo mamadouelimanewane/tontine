@@ -1,72 +1,24 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
-import { SAMPLE_TONTINES, SAMPLE_MEMBERS, generateContributions, generateId, formatMoney, Tontine, Frequency } from '../data';
+import { SAMPLE_TONTINES, SAMPLE_MEMBERS, generateContributions, formatMoney } from '../data';
 import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
-import { Icons } from '../components/ui/Icons';
-import { Modal } from '../components/ui/Modal';
-import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
 import { EmptyState } from '../components/ui/EmptyState';
 
 export default function TontinesPage() {
     const router = useRouter();
-    const [tontines, setTontines] = useState<Tontine[]>(SAMPLE_TONTINES);
-    const [members] = useState(SAMPLE_MEMBERS);
-    const [contributions] = useState(generateContributions());
-    const [showCreate, setShowCreate] = useState(false);
-
-    // New tontine form state
-    const [newTontineName, setNewTontineName] = useState("");
-    const [newTontineDesc, setNewTontineDesc] = useState("");
-    const [newTontineAmount, setNewTontineAmount] = useState("");
-    const [newTontineFreq, setNewTontineFreq] = useState("monthly");
-
-    const handleCreate = () => {
-        if (!newTontineName || !newTontineAmount) return;
-
-        const newTontine: Tontine = {
-            id: generateId(),
-            name: newTontineName,
-            description: newTontineDesc,
-            amount: parseInt(newTontineAmount),
-            currency: "FCFA",
-            frequency: newTontineFreq as Frequency,
-            startDate: new Date().toISOString().split("T")[0],
-            members: ["m1"],
-            currentCycle: 1,
-            totalCycles: 1,
-            currentBeneficiary: "m1",
-            status: "active",
-            createdBy: "m1",
-            rules: "",
-            drawStrategy: 'ROTATIVE',
-            fineAmount: 0,
-            loanInterestEnabled: false,
-            loanInterestRate: 0,
-            maxLoanAmount: 0,
-        };
-
-        setTontines((prev) => [...prev, newTontine]);
-        setShowCreate(false);
-
-        // Reset form
-        setNewTontineName("");
-        setNewTontineDesc("");
-        setNewTontineAmount("");
-        setNewTontineFreq("monthly");
-    };
+    const tontines = SAMPLE_TONTINES;
+    const members = SAMPLE_MEMBERS;
+    const contributions = generateContributions();
 
     return (
         <div style={{ padding: "0 16px 100px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0" }}>
                 <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800 }}>Mes Tontines</h2>
-                <Button onClick={() => setShowCreate(true)} size="sm"><Icons.Plus /> Créer</Button>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -121,40 +73,7 @@ export default function TontinesPage() {
                 })}
             </div>
 
-            {tontines.length === 0 && <EmptyState icon="🤝" title="Aucune tontine" subtitle="Créez votre première tontine !" />}
-
-            <Modal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Nouvelle Tontine">
-                <Input
-                    label="Nom de la tontine"
-                    value={newTontineName}
-                    onChange={setNewTontineName}
-                    placeholder="Ex: Tontine Famille"
-                />
-                <Input
-                    label="Description"
-                    value={newTontineDesc}
-                    onChange={setNewTontineDesc}
-                    placeholder="Ex: Tontine mensuelle"
-                />
-                <Input
-                    label="Montant (FCFA)"
-                    value={newTontineAmount}
-                    onChange={setNewTontineAmount}
-                    placeholder="25000"
-                    type="number"
-                />
-                <Select
-                    label="Fréquence"
-                    value={newTontineFreq}
-                    onChange={setNewTontineFreq}
-                    options={[
-                        { value: "weekly", label: "Hebdomadaire" },
-                        { value: "biweekly", label: "Bimensuelle" },
-                        { value: "monthly", label: "Mensuelle" }
-                    ]}
-                />
-                <Button onClick={handleCreate} style={{ width: "100%", marginTop: 8 }} size="lg">Créer la tontine</Button>
-            </Modal>
+            {tontines.length === 0 && <EmptyState icon="🤝" title="Aucune tontine" subtitle="Contactez votre administrateur pour rejoindre une tontine." />}
         </div>
     );
 }
